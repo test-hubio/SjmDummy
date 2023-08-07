@@ -1,5 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import {
   Add,
@@ -12,17 +13,22 @@ import {
   Orders,
   Login,
   Register,
+  Pay,
+  Success,
 } from "../pages";
 
 import { Navbar, Footer } from "../components";
 
 const Layout = () => {
+  const queryClient = new QueryClient();
   return (
-    <div className="app">
-      <Navbar />
-      <Outlet />
-      <Footer />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="app">
+        <Navbar />
+        <Outlet />
+        <Footer />
+      </div>
+    </QueryClientProvider>
   );
 };
 const Routes = [
@@ -61,6 +67,14 @@ const Routes = [
       {
         path: "/add",
         element: <Add />,
+      },
+      {
+        path: "/pay/:id",
+        element: <Pay />,
+      },
+      {
+        path: "/success",
+        element: <Success />,
       },
     ],
   },

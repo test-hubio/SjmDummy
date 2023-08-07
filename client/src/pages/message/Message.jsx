@@ -1,8 +1,39 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import request from "../../utils/request.utils";
 import "./Message.scss";
 
 const Message = () => {
+  const queryClient = useQueryClient();
+  const { id } = useParams();
+  const mutation = useMutation({
+    mutationFn: (data) =>
+      request
+        .post(`/conversation/${data.convesationId}/messages`, data)
+        .then((res) => res.data.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["messages"] });
+    },
+  });
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["messages"],
+    queryFn: () =>
+      request.get(`/conversation/${id}/messages`).then((res) => res.data.data),
+  });
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const desc = e.target[0].value;
+    mutation.mutate({ desc, conversationId: id });
+    e.target[0].value = "";
+  };
+
+  if (isLoading) return <div style={{ textAlign: "center" }}>Loading...</div>;
+  if (isError) return <div style={{ textAlign: "center" }}>Error</div>;
+
   return (
     <div className="message">
       <div className="container">
@@ -10,82 +41,34 @@ const Message = () => {
           <Link to="/messages" className="link">
             MESSAGES
           </Link>
-          &gt; Vighnesh M &gt;
+          &gt; {id}
         </span>
         <div className="messages">
-          <div className="item">
-            <img
-              src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-              alt=""
-            />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quam
-              blanditiis quibusdam, magni corrupti earum, dicta animi quasi
-              provident maxime, nobis soluta rem voluptatibus impedit quis
-              asperiores natus facilis dolore inventore? Veniam in saepe magni
-              ut molestiae recusandae praesentium, excepturi quidem natus nobis
-              itaque dolorem, suscipit accusantium debitis quae ullam neque.
-            </p>
-          </div>
-          <div className="item owner">
-            <img
-              src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-              alt=""
-            />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quam
-              blanditiis quibusdam, magni corrupti earum, dicta animi quasi
-              provident maxime, nobis soluta rem voluptatibus impedit quis
-              asperiores natus facilis dolore inventore? Veniam in saepe magni
-              ut molestiae recusandae praesentium, excepturi quidem natus nobis
-              itaque dolorem, suscipit accusantium debitis quae ullam neque.
-            </p>
-          </div>
-          <div className="item">
-            <img
-              src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-              alt=""
-            />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quam
-              blanditiis quibusdam, magni corrupti earum, dicta animi quasi
-              provident maxime, nobis soluta rem voluptatibus impedit quis
-              asperiores natus facilis dolore inventore? Veniam in saepe magni
-              ut molestiae recusandae praesentium, excepturi quidem natus nobis
-              itaque dolorem, suscipit accusantium debitis quae ullam neque.
-            </p>
-          </div>
-          <div className="item owner">
-            <img
-              src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-              alt=""
-            />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quam
-              blanditiis quibusdam, magni corrupti earum, dicta animi quasi
-              provident maxime, nobis soluta rem voluptatibus impedit quis
-              asperiores natus facilis dolore inventore? Veniam in saepe magni
-              ut molestiae recusandae praesentium, excepturi quidem natus nobis
-              itaque dolorem, suscipit accusantium debitis quae ullam neque.
-            </p>
-          </div>
-          <div className="item">
-            <img
-              src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-              alt=""
-            />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quam
-              blanditiis quibusdam, magni corrupti earum, dicta animi quasi
-              provident maxime, nobis soluta rem voluptatibus impedit quis
-              asperiores natus facilis dolore inventore? Veniam in saepe magni
-              ut molestiae recusandae praesentium, excepturi quidem natus nobis
-              itaque dolorem, suscipit accusantium debitis quae ullam neque.
-            </p>
-          </div>
+          {data && data.length > 0 ? (
+            data.map((msg) => (
+              <div
+                key={msg._id}
+                className={`item ${
+                  msg.senderId._id == currentUser._id ? "owner" : ""
+                }`}
+              >
+                <img
+                  src={
+                    msg.senderId._id == currentUser._id
+                      ? currentUser.img || "/img/noavatar.png"
+                      : msg.senderId.img || "/img/noavatar.png"
+                  }
+                  alt=""
+                />
+                <p>{msg.desc}</p>
+              </div>
+            ))
+          ) : (
+            <div style={{ textAlign: "center" }}>No messages</div>
+          )}
         </div>
         <hr />
-        <div className="write">
+        <form className="write" onSubmit={handleSubmit}>
           <textarea
             name=""
             placeholder="write a message..."
@@ -93,8 +76,8 @@ const Message = () => {
             cols="30"
             rows="10"
           ></textarea>
-          <button>Send</button>
-        </div>
+          <button type="submit">Send</button>
+        </form>
       </div>
     </div>
   );

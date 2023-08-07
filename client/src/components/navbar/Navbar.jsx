@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import "./Navbar.scss";
+import request from "../../utils/request.utils";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -19,11 +21,13 @@ const Navbar = () => {
       window.removeEventListener("scroll", isActive);
     };
   }, []);
-  const currentUser = {
-    id: 1,
-    name: "Vighnesh M",
-    isSeller: true,
+
+  const handleLogout = async () => {
+    await request.post("/auth/logout");
+    localStorage.removeItem("currentUser");
+    navigate("/");
   };
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   return (
     <div className={active || pathname !== "/" ? "navbar active" : "navbar"}>
@@ -38,15 +42,17 @@ const Navbar = () => {
           <span>Fiverr Buisness</span>
           <span>Explore</span>
           <span>English</span>
-          <span>Sign in</span>
-          {!currentUser?.isSeller && <span>Become a Seller</span>}
+          {!currentUser && (
+            <Link className="link" to="login">
+              Sign in
+            </Link>
+          )}
+            
+          {!currentUser?.isSeller && <Link className="link" to="/register"><span>Become a Seller</span></Link>}
           {currentUser && (
             <div className="user" onClick={() => setOpen(!open)}>
-              <img
-                src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
-                alt=""
-              />
-              <span>{currentUser?.name}</span>
+              <img src={currentUser?.img || "./img/noavatar.png"} alt="" />
+              <span>{currentUser?.username}</span>
               {open && (
                 <div className="options">
                   {currentUser?.isSeller && (
@@ -65,15 +71,18 @@ const Navbar = () => {
                   <Link className="link" to="messages">
                     Messages
                   </Link>
-                  <Link className="link" to="/">
+                  <Link className="link" onClick={handleLogout}>
                     Logout
                   </Link>
                 </div>
               )}
             </div>
           )}
-          {!currentUser && (<button>Join</button>)}
-          
+          {!currentUser && (
+            <Link className="link" to="/register">
+              <button>Join</button>
+            </Link>
+          )}
         </div>
       </div>
       {active ||

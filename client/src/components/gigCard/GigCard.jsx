@@ -4,18 +4,18 @@ import "./GigCard.scss";
 
 const GigCard = ({ item }) => {
   return (
-    <Link to={`/gig/${item.id}`} className="link">
+    <Link to={`/gig/${item._id}`} className="link" key={item.id}>
       <div className="gig-card">
-        <img src={item.img} alt="" />
+        <img src={item.cover} alt="" />
         <div className="info">
           <div className="user">
-            <img src={item.pp} alt="" />
-            <span>{item.username}</span>
+            <img src={item.userId.img || "./img/noavatar.png"} alt="" />
+            <span>{item.userId.username}</span>
           </div>
-          <p>{item.desc}</p>
+          <p>{item.shortDesc}</p>
           <div className="star">
             <img src="./img/star.png" alt="" />
-            <span>{item.star}</span>
+            <span>{Math.round(item.toalStars / item.starNumber) || 0}</span>
           </div>
         </div>
         <hr />

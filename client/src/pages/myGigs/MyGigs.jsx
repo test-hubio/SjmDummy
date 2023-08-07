@@ -1,8 +1,34 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import "./MyGigs.scss";
+import request from "../../utils/request.utils";
 
 const MyGigs = () => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (id) =>
+      request.delete(`/gigs/${id}`).then((res) => res.data.data),
+    onSuccess: () => queryClient.invalidateQueries("myGigs"),
+  });
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["myGigs"],
+    queryFn: () =>
+      request
+        .get(`/gigs?userId=${currentUser._id}`)
+        .then((res) => res.data.data),
+  });
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error</div>;
+
+  const handleDelete = (id) => {
+    mutation.mutate(id);
+  };
+
   return (
     <div className="my-gigs">
       <div className="container">
@@ -21,109 +47,31 @@ const MyGigs = () => {
               <th>Sales</th>
               <th>Action</th>
             </tr>
-            <tr>
-              <td>
-                <img
-                  className="image"
-                  src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-              </td>
-              <td>Stunning concept art</td>
-              <td>
-                59.<sup>99</sup>
-              </td>
-              <td>13</td>
-              <td>
-                <img className="delete" src="./img/delete.png" alt="" />
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <img
-                  className="image"
-                  src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-              </td>
-              <td>Stunning concept art</td>
-              <td>
-                59.<sup>99</sup>
-              </td>
-              <td>13</td>
-              <td>
-                <img className="delete" src="./img/delete.png" alt="" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img
-                  className="image"
-                  src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-              </td>
-              <td>Stunning concept art</td>
-              <td>
-                59.<sup>99</sup>
-              </td>
-              <td>13</td>
-              <td>
-                <img className="delete" src="./img/delete.png" alt="" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img
-                  className="image"
-                  src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-              </td>
-              <td>Stunning concept art</td>
-              <td>
-                59.<sup>99</sup>
-              </td>
-              <td>13</td>
-              <td>
-                <img className="delete" src="./img/delete.png" alt="" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img
-                  className="image"
-                  src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-              </td>
-              <td>Stunning concept art</td>
-              <td>
-                59.<sup>99</sup>
-              </td>
-              <td>13</td>
-              <td>
-                <img className="delete" src="./img/delete.png" alt="" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img
-                  className="image"
-                  src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-              </td>
-              <td>Stunning concept art</td>
-              <td>
-                59.<sup>99</sup>
-              </td>
-              <td>13</td>
-              <td>
-                <img className="delete" src="./img/delete.png" alt="" />
-              </td>
-            </tr>
+            {data && data.length ? (
+              data.map((gig) => (
+                <tr key={gig._id}>
+                  <td>
+                    <img className="image" src={gig.cover} alt="" />
+                  </td>
+                  <td>{gig.title}</td>
+                  <td>
+                    {gig.price}
+                    <sup>99</sup>
+                  </td>
+                  <td>{gig.sales}</td>
+                  <td>
+                    <img
+                      className="delete"
+                      src="./img/delete.png"
+                      alt=""
+                      onClick={() => handleDelete(gig._id)}
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <div>No gigs</div>
+            )}
           </tbody>
         </table>
       </div>
