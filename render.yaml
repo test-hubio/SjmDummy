@@ -19,7 +19,7 @@ services:
         fromService:
           name: client
           type: web
-          property: url
+          property: hostport
 
   - name: server
     type: web
@@ -43,7 +43,7 @@ services:
         fromService:
           name: client
           type: web
-          property: url
+          property: hostport
 
   - name: client
     type: web
@@ -55,10 +55,10 @@ services:
         fromService:
           name: server
           type: web
-          property: url
+          property: hostport
           append: /api
       - key: VITE_PYTHON_API_URL
         fromService:
           name: python-sjm
           type: web
-          property: url
+          property: hostport
