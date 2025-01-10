@@ -11,18 +11,34 @@ exports.addGig = async (req, res, next) => {
     next(err);
   }
 };
+
 exports.getAllGigs = async (req, res, next) => {
-  const filters = {};
-  if (req.query.search)
-    filters.title = { $regex: req.query.search, $options: "i" };
-  if (req.query.max) filters.price = { $lte: req.query.max };
-  if (req.query.min) filters.price = { $gte: req.query.min };
-  if (req.query.cat) filters.cat = req.query.cat;
-  if(req.query.userId) filters.userId = req.query.userId;
   try {
-    const gigs = await Gig.find(filters)
-      .sort({ [req.query.sort]: -1 })
-      .populate("userId", "username img");
+    let query = 'SELECT g.*, u.username, u.img FROM gigs g JOIN users u ON g.user_id = u.id WHERE 1=1';
+    let params = [];
+
+    if (req.query.search) {
+      query += ' AND g.title LIKE ?';
+      params.push(`%${req.query.search}%`);
+    }
+    if (req.query.max) {
+      query += ' AND g.price <= ?';
+      params.push(req.query.max);
+    }
+    if (req.query.min) {
+      query += ' AND g.price >= ?';
+      params.push(req.query.min);
+    }
+    if (req.query.cat) {
+      query += ' AND g.category = ?';
+      params.push(req.query.cat);
+    }
+    if (req.query.userId) {
+      query += ' AND g.user_id = ?';
+      params.push(req.query.userId);
+    }
+
+    const [gigs] = await global.db.execute(query, params);
     res.status(200).json({ success: true, data: gigs });
   } catch (err) {
     next(err);

@@ -1,25 +1,17 @@
 const Conversation = require("../models/conversation.model");
 const createError = require("../utils/createError");
 
+// Replace MongoDB save() with MySQL insert
 exports.createConversation = async (req, res, next) => {
-  const isSeller = req.user.isSeller;
-  const to = req.body.to;
-  const from = req.user.id;
-
-  const newConversation = new Conversation({
-    // sellerId + buyerId = conversationId
-    id: isSeller ? from + to : to + from,
-    sellerId: isSeller ? from : to,
-    buyerId: isSeller ? to : from,
-    readBySeller: isSeller ? true : false,
-    readByBuyer: isSeller ? false : true,
-  });
-
   try {
-    const conversation = await newConversation.save();
+    const conversation = await Conversation.create({
+      id: isSeller ? from + to : to + from,
+      seller_id: isSeller ? from : to,
+      buyer_id: isSeller ? to : from
+    });
     res.status(200).json({
       success: true,
-      data: conversation,
+      data: conversation
     });
   } catch (err) {
     next(err);

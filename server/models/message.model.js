@@ -1,24 +1,35 @@
-const mongoose = require("mongoose");
+class Message {
+  static async create(messageData) {
+    const { conversation_id, sender_id, description } = messageData;
+    
+    const [result] = await global.db.execute(
+      'INSERT INTO messages (conversation_id, sender_id, description) VALUES (?, ?, ?)',
+      [conversation_id, sender_id, description]
+    );
 
-const MessageModel = new mongoose.Schema(
-  {
-    conversationId: {
-      type: String,
-      required: true,
-    },
-    senderId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    desc: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
+    const [message] = await global.db.execute(
+      'SELECT * FROM messages WHERE id = ?',
+      [result.insertId]
+    );
+
+    return message[0];
   }
-);
 
-module.exports = mongoose.model("Message", MessageModel);
+  static async findByConversationId(conversationId) {
+    const [messages] = await global.db.execute(
+      'SELECT m.*, u.username FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.conversation_id = ? ORDER BY m.created_at ASC',
+      [conversationId]
+    );
+    return messages;
+  }
+
+  static async deleteMessage(messageId, userId) {
+    const [result] = await global.db.execute(
+      'DELETE FROM messages WHERE id = ? AND sender_id = ?',
+      [messageId, userId]
+    );
+    return result.affectedRows > 0;
+  }
+}
+
+module.exports = Message;

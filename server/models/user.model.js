@@ -1,64 +1,45 @@
-const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
-const UserModel = new mongoose.Schema(
-  {
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    img: {
-      type: String,
-      required: false,
-    },
-    country: {
-      type: String,
-      required: true,
-    },
-    phone: {
-      type: String,
-      required: false,
-    },
-    desc: {
-      type: String,
-      required: false,
-    },
-    isSeller: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    timestamps: true,
+class User {
+  static async findByUsername(username) {
+    const [rows] = await global.db.execute(
+      'SELECT * FROM users WHERE username = ?',
+      [username]
+    );
+    return rows[0];
   }
-);
 
-UserModel.pre("save", async function (next) {
-  const hashedPass = await bcrypt.hash(this.password, 10);
-  this.password = hashedPass;
-  next();
-});
+  static async create(userData) {
+    const { username, email, password, country, phone, desc, is_seller, img } = userData;
+    
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      const [result] = await global.db.execute(
+        'INSERT INTO users (username, email, password, country, phone, description, is_seller, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [username, email, hashedPassword, country, phone, desc, is_seller, img]
+      );
+      
+      const [user] = await global.db.execute(
+        'SELECT * FROM users WHERE id = ?',
+        [result.insertId]
+      );
+      
+      return user[0];
+    } catch (err) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        throw new Error('Username or email already exists');
+      }
+      throw err;
+    }
+  }
 
-UserModel.methods.isPasswordMatch = async function (password) {
-  return await bcrypt.compare(password, this.password);
-};
+  static getSignToken(userId) {
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+  }
+}
 
-UserModel.methods.getSignToken = function () {
-  return jwt.sign(
-    { id: this._id, isSeller: this.isSeller },
-    process.env.JWT_SECRET
-  );
-};
-
-module.exports = mongoose.model("User", UserModel);
+module.exports = User;

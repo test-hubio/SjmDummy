@@ -1,30 +1,31 @@
-const mongoose = require("mongoose");
+class Gig {
+  static async create(gigData) {
+    const { user_id, title, description, category, price, cover_image, images, 
+            short_title, short_desc, delivery_time, revision_number, features } = gigData;
 
-const GigModel = new mongoose.Schema(
-  {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    totalStars: { type: Number, default: 0 },
-    starNumber: { type: Number, default: 0 },
-    cat: { type: String, required: true },
-    price: { type: Number, required: true },
-    cover: { type: String, required: true },
-    images: { type: [String], required: false },
-    shortTitle: { type: String, required: true },
-    shortDesc: { type: String, required: true },
-    deliveryTime: { type: Number, required: true },
-    revisionNumber: { type: Number, required: true },
-    features: { type: [String], required: false },
-    sales: { type: Number, default: 0 },
-  },
-  {
-    timestamps: true,
+    const [result] = await global.db.execute(
+      `INSERT INTO gigs (user_id, title, description, category, price, cover_image, 
+        images, short_title, short_desc, delivery_time, revision_number, features) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [user_id, title, description, category, price, cover_image, 
+       JSON.stringify(images), short_title, short_desc, delivery_time, 
+       revision_number, JSON.stringify(features)]
+    );
+
+    return this.findById(result.insertId);
   }
-);
 
-module.exports = mongoose.model("Gig", GigModel);
+  static async findById(id) {
+    const [gig] = await global.db.execute('SELECT * FROM gigs WHERE id = ?', [id]);
+    return gig[0];
+  }
+
+  static async updateStars(gigId, totalStars, starNumber) {
+    await global.db.execute(
+      'UPDATE gigs SET total_stars = ?, star_number = ? WHERE id = ?',
+      [totalStars, starNumber, gigId]
+    );
+  }
+}
+
+module.exports = Gig;

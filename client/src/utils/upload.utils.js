@@ -7,7 +7,7 @@ const upload = async (file) => {
 
   try {
     const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/vighnesh/image/upload",
+      "https://api.cloudinary.com/v1_1/dclcinydg/image/upload",
       data
     );
     const { secure_url } = res.data;

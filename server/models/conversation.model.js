@@ -1,34 +1,37 @@
-const mongoose = require("mongoose");
+class Conversation {
+  static async create(conversationData) {
+    const { id, seller_id, buyer_id } = conversationData;
 
-const ConversationModel = new mongoose.Schema(
-  {
-    id: { type: String, required: true, unique: true },
-    sellerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    buyerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    readByBuyer: {
-      type: Boolean,
-      default: false,
-    },
-    readBySeller: {
-      type: Boolean,
-      default: false,
-    },
-    lastMessage: {
-      type: String,
-      default: "",
-    },
-  },
-  {
-    timestamps: true,
+    const [result] = await global.db.execute(
+      'INSERT INTO conversations (id, seller_id, buyer_id) VALUES (?, ?, ?)',
+      [id, seller_id, buyer_id]
+    );
+
+    return this.findById(id);
   }
-);
 
-module.exports = mongoose.model("Conversation", ConversationModel);
+  static async findById(id) {
+    const [conversation] = await global.db.execute(
+      'SELECT * FROM conversations WHERE id = ?', 
+      [id]
+    );
+    return conversation[0];
+  }
+
+  static async updateReadStatus(id, isSeller, status) {
+    const field = isSeller ? 'read_by_seller' : 'read_by_buyer';
+    await global.db.execute(
+      `UPDATE conversations SET ${field} = ? WHERE id = ?`,
+      [status, id]
+    );
+  }
+
+  static async updateLastMessage(id, message) {
+    await global.db.execute(
+      'UPDATE conversations SET last_message = ? WHERE id = ?',
+      [message, id]
+    );
+  }
+}
+
+module.exports = Conversation;
