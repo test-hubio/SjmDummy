@@ -5,7 +5,7 @@ from mysql.connector.pooling import MySQLConnectionPool
 import os
 
 app = Flask(__name__)
-CORS(app, origins=[os.getenv("FRONTEND_URL", "http://localhost:5173")], credentials=True)
+CORS(app, origins=[os.getenv("CLIENT_URL", "http://localhost:5173")], credentials=True)
 
 # Database connection pool
 dbconfig = {
