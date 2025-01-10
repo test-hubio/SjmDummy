@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+buildCommand = "npm install"
+
+[deploy]
+startCommand = "node app.js"
+healthcheckPath = "/api/auth"
+healthcheckTimeout = 100
