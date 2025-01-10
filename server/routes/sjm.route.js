@@ -2,7 +2,7 @@ const router = require("express").Router();
 const axios = require("axios");
 const isAuth = require("../middleware/jwt");
 
-const PYTHON_API = "http://localhost:7900";
+const PYTHON_API = process.env.PYTHON_API_URL || "http://localhost:7900";
 
 router.post("/find-matches", isAuth, async (req, res) => {
   try {
