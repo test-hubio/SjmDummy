@@ -44,8 +44,8 @@ nltk.download(['punkt', 'stopwords'], quiet=True)
 class SkillsExtract:
     def __init__(
         self,
-        claude_api_key: Optional[str] = "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",
-        openai_api_key: Optional[str] = "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"
+        claude_api_key: Optional[str] = NULL,
+        openai_api_key: Optional[str] = NULL
     ):
         # Load API keys securely
         self.claude_api_key = claude_api_key or os.getenv('CLAUDE_API_KEY')
