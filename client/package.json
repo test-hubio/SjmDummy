@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node logDistPath.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -16,13 +16,15 @@
     "@stripe/stripe-js": "^1.54.2",
     "@tanstack/react-query": "^4.32.6",
     "axios": "^1.4.0",
-    "infinite-react-carousel": "^1.2.11",
+    "fs": "^0.0.1-security",
     "moment": "^2.29.4",
+    "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.4.0",
     "react-router-dom": "^6.14.2",
-    "sass": "^1.64.1"
+    "sass": "^1.64.1",
+    "url": "^0.11.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
@@ -35,7 +37,7 @@
     "vite": "^4.4.5"
   },
   "engines": {
-    "node": "18.x",
+    "node": "20.x",
     "yarn": ">=1.22"
   }
 }
