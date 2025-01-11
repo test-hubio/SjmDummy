@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { Slider } from "infinite-react-carousel";
+import Slider from "react-slick"; // Import Slider from react-slick
 
 import "./Gig.scss";
 
@@ -17,6 +17,14 @@ const Gig = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
+
+  const sliderSettings = {
+    slidesToShow: 1,
+    arrowsScroll: 1,
+    infinite: true,
+    speed: 500,
+    slidesToScroll: 1,
+  };
 
   return (
     <div className="gig">
@@ -53,8 +61,8 @@ const Gig = () => {
                 </div>
               )}
             </div>
-            <Slider slidesToShow={1} arrowsScroll={1} className="slider">
-              <img src={data.cover} />
+            <Slider {...sliderSettings} className="slider">
+              <img src={data.cover} alt="Cover" />
               {data.images.map((i, id) => (
                 <img src={i} alt="" key={id} />
               ))}
