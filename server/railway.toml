@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd server && npm install"
+buildCommand = "cd server && yarn"
 nixpacksPlan = "nodejs"
 
 [deploy]
-startCommand = "cd server && node app.js"
+startCommand = "cd server && yarn start"
 healthcheckPath = "/api/auth"
 healthcheckTimeout = 100
