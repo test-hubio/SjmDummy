@@ -1,0 +1,12 @@
+# server/nixpacks.toml
+[variables]
+NODE_VERSION = "18"
+
+[phases.setup]
+nixPkgs = ["nodejs-18_x", "npm"]
+
+[phases.build]
+cmds = ["npm install"]
+
+[start]
+cmd = "node app.js"

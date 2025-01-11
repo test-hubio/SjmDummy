@@ -1,0 +1,15 @@
+[variables]
+NODE_VERSION = "18"
+
+[phases.setup]
+nixPkgs = ["nodejs-18_x", "npm"]
+
+[phases.build]
+cmds = [
+  "npm install",
+  "npm run build"  # This will run Vite's build process
+]
+
+[start]
+# For production, we'll serve the built files
+cmd = "npm run preview"  # or use a static file server

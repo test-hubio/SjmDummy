@@ -1,0 +1,9 @@
+# python-sjm/nixpacks.toml
+[phases.setup]
+nixPkgs = ["python39", "python39Packages.pip"]
+
+[phases.build]
+cmds = ["pip install -r requirements.txt"]
+
+[start]
+cmd = "python api.py" 
