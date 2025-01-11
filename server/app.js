@@ -51,11 +51,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // Catch-all handler for all non-API routes to serve the React app
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
 
