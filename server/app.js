@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const path = require("path");
+const fs = require("fs");
 
 const connectDB = require("./config/db");
 const ENV = process.env;
@@ -59,13 +60,31 @@ app.use("/api/gigs", gigRouter);
 app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
-const clientDistPath = path.join(__dirname, "../client/dist");
-app.use(express.static(clientDistPath));
+// Resolving the static files path
+const clientDistPath = path.resolve(__dirname, "../client/dist");
+console.log("Serving static files from:", clientDistPath);
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(clientDistPath, "index.html"));
+// Check if the static files directory exists
+fs.access(clientDistPath, fs.constants.F_OK, (err) => {
+  if (err) {
+    console.error("Static files directory does not exist:", clientDistPath);
+  }
 });
 
+// Serve static files
+app.use(express.static(clientDistPath));
+
+// Ensure that index.html is served for any route
+app.get("*", (req, res) => {
+  const requestedFile = path.join(clientDistPath, "index.html");
+  fs.access(requestedFile, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error("index.html not found:", requestedFile);
+      return res.status(404).send("File not found");
+    }
+    res.sendFile(requestedFile);
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
