@@ -11,13 +11,6 @@ const ENV = process.env;
 const DB_URI = ENV.DB_URI;
 
 const path = require('path');
-// Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-// Catch-all handler for all non-API routes to serve the React app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
 
 
 // Create MySQL connection pool
@@ -56,6 +49,15 @@ app.use(
 ENV.NODE_ENV === "development" && app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
+
+
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Catch-all handler for all non-API routes to serve the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 
 // mount routes
 app.use("/api/auth", authRouter);
