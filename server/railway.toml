@@ -1,8 +1,8 @@
 [build]
 builder = "nixpacks"
-buildCommand = "npm install"
+buildCommand = "cd server && npm install"
 
 [deploy]
-startCommand = "node app.js"
+startCommand = "cd server && node app.js"
 healthcheckPath = "/api/auth"
 healthcheckTimeout = 100
