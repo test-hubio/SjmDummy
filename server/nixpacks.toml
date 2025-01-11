@@ -1,12 +1,8 @@
-# server/nixpacks.toml
-[variables]
-NODE_VERSION = "18"
-
 [phases.setup]
-nixPkgs = ["nodejs-18_x", "npm"]
+nixPkgs = ["nodejs, "yarn"]
 
 [phases.build]
-cmds = ["npm install"]
+cmds = ["yarn"]
 
 [start]
-cmd = "node app.js"
+cmd = "npm start"
