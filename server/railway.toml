@@ -4,6 +4,6 @@ buildCommand = "cd server && yarn"
 nixpacksPlan = "nodejs"
 
 [deploy]
-startCommand = "cd server && yarn start"
+startCommand = "yarn start"
 healthcheckPath = "/api/auth"
 healthcheckTimeout = 100
