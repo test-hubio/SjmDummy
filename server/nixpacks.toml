@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ["nodejs", "yarn"]
-
-[phases.build]
-cmds = ["yarn"]
-
-[start]
-cmd = "yarn start"
