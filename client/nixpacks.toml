@@ -1,13 +1,12 @@
 [variables]
-NODE_VERSION = "20"
+NODE_VERSION = "18"
 
 [phases.setup]
-nixPkgs = ["nodejs-20_x", "yarn"]
+nixPkgs = ["nodejs-18_x", "yarn"]
 
 [phases.build]
 cmds = [
   "yarn install --frozen-lockfile",
-  "npm install",
   "npm run build"
 ]
 
