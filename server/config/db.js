@@ -10,7 +10,7 @@ const connectDB = async () => {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      port: 3306  // Default XAMPP MySQL port
+      port: process.env.DB_PORT || 3306
     });
 
     // Test connection
