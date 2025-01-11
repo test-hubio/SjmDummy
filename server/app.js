@@ -59,6 +59,14 @@ app.use("/api/gigs", gigRouter);
 app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
+const clientDistPath = path.join(__dirname, "../client/dist");
+app.use(express.static(clientDistPath));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientDistPath, "index.html"));
+});
+
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
