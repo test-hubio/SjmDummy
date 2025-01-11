@@ -61,22 +61,22 @@ app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
 // Resolving the static files path
-const clientDistPath = path.resolve(__dirname, "../client/app/dist");
-console.log("Serving static files from:", clientDistPath);
+const clDistPath = path.resolve(__dirname, "../client/app/dist");
+console.log("Serving static files from:", clDistPath);
 
 // Check if the static files directory exists
-fs.access(clientDistPath, fs.constants.F_OK, (err) => {
+fs.access(clDistPath, fs.constants.F_OK, (err) => {
   if (err) {
-    console.error("Static files directory does not exist:", clientDistPath);
+    console.error("Static files directory does not exist:", clDistPath);
   }
 });
 
 // Serve static files
-app.use(express.static(clientDistPath));
+app.use(express.static(clDistPath));
 
 // Ensure that index.html is served for any route
 app.get("*", (req, res) => {
-  const requestedFile = path.join(clientDistPath, "index.html");
+  const requestedFile = path.join(clDistPath, "index.html");
   fs.access(requestedFile, fs.constants.F_OK, (err) => {
     if (err) {
       console.error("index.html not found:", requestedFile);
