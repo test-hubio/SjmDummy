@@ -1,75 +1,69 @@
 require("dotenv").config();
 
-const mysql = require('mysql2');
+const mysql = require("mysql2");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+const path = require("path");
 
 const connectDB = require("./config/db");
 const ENV = process.env;
 const DB_URI = ENV.DB_URI;
 
-const path = require('path');
-
-
 // Create MySQL connection pool
 const pool = mysql.createPool({
-  host: ENV.DB_HOST || 'localhost',
+  host: ENV.DB_HOST || "localhost",
   user: ENV.DB_USER,
   password: ENV.DB_PASSWORD,
   database: ENV.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
 // Export promise-based pool for async/await usage
 const promisePool = pool.promise();
 global.db = promisePool;
 
-// import routes
+// Import routes
 const authRouter = require("./routes/auth.route");
-const userRotuer = require("./routes/user.route");
+const userRouter = require("./routes/user.route");
 const gigRouter = require("./routes/gig.route");
-const sjmRouter = require("./routes/sjm.route")
+const sjmRouter = require("./routes/sjm.route");
 const conversationRouter = require("./routes/conversation.route");
 
 const app = express();
 
+// CORS configuration
 app.use(
   cors({
     origin: ENV.CLIENT_URL || "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-ENV.NODE_ENV === "development" && app.use(morgan("dev"));
+if (ENV.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
 app.use(express.json());
 app.use(cookieParser());
 
-
-app.use(express.static(path.join(__dirname, '/client/dist' || '../client/dist')));
-
-// Catch-all handler for all non-API routes to serve the React app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/client/dist' || '../client/dist', 'index.html'));
-});
-
-
-// mount routes
+// Mount routes
 app.use("/api/auth", authRouter);
-app.use("/api/user", userRotuer);
+app.use("/api/user", userRouter);
 app.use("/api/gigs", gigRouter);
 app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Internal Server Error";
-  console.log(err);
+  console.error(err);
   return res.status(errorStatus).json({ success: false, error: errorMessage });
 });
 
