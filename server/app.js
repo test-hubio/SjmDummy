@@ -10,6 +10,16 @@ const connectDB = require("./config/db");
 const ENV = process.env;
 const DB_URI = ENV.DB_URI;
 
+const path = require('path');
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Catch-all handler for all non-API routes to serve the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
+
 // Create MySQL connection pool
 const pool = mysql.createPool({
   host: ENV.DB_HOST || 'localhost',
