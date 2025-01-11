@@ -1,7 +1,0 @@
-[build]
-builder = "nixpacks"
-
-[deploy]
-# Adjust this based on your Vite config
-healthcheckPath = "/"  
-healthcheckTimeout = 100
