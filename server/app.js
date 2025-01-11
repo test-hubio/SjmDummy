@@ -61,7 +61,7 @@ app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
 // Resolving the static files path
-const clientDistPath = path.resolve(__dirname, "/client/app/dist");
+const clientDistPath = path.resolve(__dirname, "../client/app/dist");
 console.log("Serving static files from:", clientDistPath);
 
 // Check if the static files directory exists
