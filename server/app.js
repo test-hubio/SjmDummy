@@ -60,30 +60,11 @@ app.use("/api/gigs", gigRouter);
 app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
-// Resolving the static files path
-const clDistPath = path.resolve(__dirname, "/../client/dist");
-console.log("Serving static files from:", clDistPath);
+// Serve the static files from the dist directory
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
-// Check if the static files directory exists
-fs.access(clDistPath, fs.constants.F_OK, (err) => {
-  if (err) {
-    console.error("Static files directory does not exist:", clDistPath);
-  }
-});
-
-// Serve static files
-app.use(express.static(clDistPath));
-
-// Ensure that index.html is served for any route
-app.get("*", (req, res) => {
-  const requestedFile = path.join(clDistPath, "index.html");
-  fs.access(requestedFile, fs.constants.F_OK, (err) => {
-    if (err) {
-      console.error("index.html not found:", requestedFile);
-      return res.status(404).send("File not found");
-    }
-    res.sendFile(requestedFile);
-  });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // Error handling middleware
