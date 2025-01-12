@@ -1,0 +1,17 @@
+# Server Configuration
+PORT=7800
+NODE_ENV=development
+
+# Database Configuration
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=fiverr_clone
+DB_URI=http://localhost/phpmyadmin/index.php?route=/database/structure&db=fiverr_clone
+
+# JWT Configuration (for authentication)
+JWT_SECRET="keyboard cat"
+JWT_EXPIRE=30d
+JWT_COOKIE_EXPIRE=30
+
+CLIENT_URL=https://client-production-870c.up.railway.app/
