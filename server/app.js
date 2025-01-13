@@ -61,7 +61,8 @@ app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
 // Serve the static files from the dist directory
-console.log(path.join(__dirname, ENV.DIR || '../client/dist'));
+console.log("static path: ", path.join( __dirname, ENV.DIR || '../client/dist'));
+console.log("current directory: ",__dirname);
 
 app.use(express.static(path.join(__dirname, ENV.DIR || '../client/dist')));
 
