@@ -1,5 +1,5 @@
 import { resolve, dirname } from 'path';
-import { existsSync, statSync } from 'fs';
+import { existsSync} from 'fs';
 import { fileURLToPath } from 'url';
 
 // Get current file's directory

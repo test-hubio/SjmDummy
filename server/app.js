@@ -61,10 +61,12 @@ app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
 // Serve the static files from the dist directory
-app.use(express.static(path.join(__dirname, ENV.DIR || '/client')));
+console.log(path.join(__dirname, ENV.DIR || '../client/dist'));
+
+app.use(express.static(path.join(__dirname, ENV.DIR || '../client/dist')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 // Error handling middleware
