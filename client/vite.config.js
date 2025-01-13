@@ -6,6 +6,6 @@ export default defineConfig({
   base: '/app/', // Adjust the base path if necessary
   plugins: [react()],
   server: {
-    port: import.meta.env.CLIENT_PORT || 5173, // Use the provided port from the environment
+    port: process.env.CLIENT_PORT || 5173, // Use process.env for server-side environment variables
   },
 });
