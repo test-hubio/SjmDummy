@@ -10,7 +10,7 @@ const connectDB = async () => {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      port: process.env.DB_PORT || 3306
+      port: process.env.DB_PORT
     });
 
     // Test connection
