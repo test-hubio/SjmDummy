@@ -7,7 +7,7 @@ const connectDB = async () => {
       user: process.env.DB_USER || "admin",
       password: process.env.DB_PASSWORD || "M2Man1Hi",
       database: process.env.DB_NAME || "fiverr_clone",
-      port: process.env.DB_PORT || 10036,
+      port: parseInt(process.env.DB_PORT) || 10036,
       waitForConnections: true,
       connectionLimit: 10000000000,
       queueLimit: 0,
@@ -15,7 +15,11 @@ const connectDB = async () => {
 
     // Test connection
     await pool.getConnection();
-    console.log(`Database connected: ${process.env.DB_HOST} via port ${process.env.DB_PORT}`);
+    console.log('Connection details:', {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      database: process.env.DB_NAME
+    });
     return pool;
   } catch (err) {
     console.error('Database connection failed:', err);
