@@ -60,16 +60,6 @@ app.use("/api/gigs", gigRouter);
 app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
-// Serve the static files from the dist directory
-console.log("static path: ", path.join( __dirname, '/dist'));
-console.log("current directory: ",__dirname);
-
-app.use(express.static(path.join(__dirname, '/dist')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/dist/index.html'));
-});
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
