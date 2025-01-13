@@ -61,7 +61,7 @@ app.use("/api/conversation", conversationRouter);
 app.use("/ai/sjm/", sjmRouter);
 
 // Serve the static files from the dist directory
-app.use(express.static(path.join(__dirname, '../client/app/')));
+app.use(express.static(path.join(__dirname, ENV.DIR || '../client/app/')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
