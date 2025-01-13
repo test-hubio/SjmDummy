@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7800/api";
+// Determine the environment (production or development)
+const API_URL = import.meta.env.MODE === 'production' 
+  ? import.meta.env.VITE_API_URL // Use the production API URL if in production
+  : "http://localhost:7800/api";  // Use localhost if in development
 
 const request = axios.create({
   baseURL: API_URL,
