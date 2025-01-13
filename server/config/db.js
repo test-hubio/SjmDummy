@@ -3,15 +3,18 @@ const mysql = require('mysql2/promise');
 const connectDB = async () => {
   try {
     const pool = mysql.createPool({
-      host: process.env.DB_HOST || "mysql-190585-0.cloudclusters.net",
-      user: process.env.DB_USER || "admin",
-      password: process.env.DB_PASSWORD || "M2Man1Hi",
-      database: process.env.DB_NAME || "fiverr_clone",
-      port: parseInt(process.env.DB_PORT) || 10036,
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      port: parseInt(process.env.DB_PORT),
       waitForConnections: true,
-      connectionLimit: 10000000000,
+      connectionLimit: 10,
       queueLimit: 0,
-    });
+      connectTimeout: 100000, // Increase timeout to 100 seconds
+      acquireTimeout: 60000,
+      timeout: 60000
+  });
 
     // Test connection
     await pool.getConnection();
