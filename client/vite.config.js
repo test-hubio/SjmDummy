@@ -5,7 +5,4 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   base: '/',
   plugins: [react()],
-  server: {
-    port: process.env.CLIENT_PORT || 5173, // Use process.env for server-side environment variables
-  },
 });
