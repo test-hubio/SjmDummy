@@ -9,7 +9,7 @@ const connectDB = async () => {
       database: process.env.DB_NAME || "fiverr_clone",
       port: process.env.DB_PORT || 10036,
       waitForConnections: true,
-      connectionLimit: 10,
+      connectionLimit: 10000000000,
       queueLimit: 0,
     });
 
